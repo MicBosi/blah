@@ -43,6 +43,16 @@ module.exports = function(io)
         res.render('index', { title: 'Blah', version: 'v1.2.0' });
     });
 
+    /* login page */
+    router.get('/login', function(req, res, next) {
+        res.render('login', { title: 'Blah', version: 'v1.2.0' });
+    });
+
+    /* register page */
+    router.get('/register', function(req, res, next) {
+        res.render('register', { title: 'Blah', version: 'v1.2.0' });
+    });
+
     /* socket.io */
     io.on('connection', function (socket) {
         socket.join(default_room);
