@@ -45,7 +45,22 @@ var Blah = function()
         },
         
         register: function() {
-            console.log('register');
+            $.ajax({
+                method: 'POST',
+                url: '/api/register',
+                data: {
+                    username: $('#username')[0].value,
+                    password: $('#password')[0].value,
+                },
+                success: function(data) {
+                    $('#register-error').text('');
+                    document.location = '/';
+                },
+                error: function(xhr) {
+                     var data = xhr.responseJSON;
+                    $('#register-error').text(data.error);
+                }
+            });
         },
 
         login: function() {

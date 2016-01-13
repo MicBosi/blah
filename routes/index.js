@@ -1,32 +1,10 @@
 module.exports = function(io) 
 {
-    var mongoose = require('mongoose');
-    mongoose.connect('mongodb://localhost/blah');
-    var db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'connection error:'));
-    db.once('open', function() {
-        // ok
-    });
-
-    // define Message schema
-    var messageSchema = mongoose.Schema({
-        message: String,
-        author: String,
-        time: Number
-    });
-
-    // setup document auto increment so we have unique ids
-    var autoIncrement = require('mongoose-auto-increment');
-    autoIncrement.initialize(mongoose);
-    messageSchema.plugin(autoIncrement.plugin, {
-        model: 'Message',
-        field: '_id',
-        startAt: 1,
-        incrementBy: 1
-    });
+    var api = require('../api');
+    var model = require('../model');
 
     // grab Message model
-    var Message = mongoose.model('Message', messageSchema);
+    var Message = model.Message;
     
     // DANGER ZONE
     // uncomment to disable persitency
@@ -51,6 +29,42 @@ module.exports = function(io)
     /* register page */
     router.get('/register', function(req, res, next) {
         res.render('register', { title: 'Blah', version: 'v1.2.0' });
+    });
+
+    /* logout page */
+    router.get('/logout', function(req, res, next) {
+        /* logout logic */
+        // ...
+        /* redirect to home page */
+        res.redirect('/login');
+        res.end();
+    });
+
+    /* register page */
+    router.post('/api/register', function(req, res, next) {
+        api.registerUser(req.body.username, req.body.password, function(err, user) {
+            var ok = !err && user != null;
+            var error = null;
+            if (err) {
+                error = err.name == 'ValidationError' ? 'Invalid username or password.' : err.message;
+                error = err.code == 11000 ? 'Username already taken.' : error;
+            }
+            res.type('application/json');
+            res.status(ok ? 200 : 400);
+            res.end(JSON.stringify({
+                ok: ok,
+                error: error
+            }));
+        });
+    });
+
+    /* register page */
+    router.post('/api/login', function(req, res, next) {
+        var ok = api.loginUser(req.body.username, req.body.password);
+        res.type('application/json');
+        res.end(JSON.stringify({
+            ok: ok
+        }));
     });
 
     /* socket.io */
