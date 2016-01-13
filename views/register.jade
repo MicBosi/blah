@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    h2 Register
+    p 
+        p
+            span Username:<br>
+        input(type="text" id="username" style="width: 100%;")
+    p 
+        p 
+            span Password:<br>
+        input(type="text" id="password" style="width: 100%;")
+    p 
+        div(id="register-error")
+        a(href="#" class="btn btn-success pull-right" onclick="Blah.register(); return false;") Register
+        div(style="clear:both;")

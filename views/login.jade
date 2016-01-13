@@ -1,0 +1,15 @@
+extends layout
+
+block content
+    h2 Login
+    p 
+        p
+            span Username:<br>
+        input(type="text" id="username" style="width: 100%;")
+    p 
+        p 
+            span Password:<br>
+        input(type="text" id="password" style="width: 100%;")
+    p 
+        a(href="#" class="btn btn-success pull-right" onclick="Blah.login(); return false;") Login
+        div(style="clear:both;")
