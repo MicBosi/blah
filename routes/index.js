@@ -1,4 +1,4 @@
-module.exports = function(io) 
+module.exports = function(io, passport) 
 {
     var api = require('../api');
     var model = require('../model');
@@ -13,6 +13,38 @@ module.exports = function(io)
     // setup Express routing
     var express = require('express');
     var router = express.Router();
+
+    // setup Passport
+    var LocalStrategy = require('passport-local').Strategy;
+    passport.use(new LocalStrategy({
+            usernameField: 'username',
+            passwordField: 'password'
+        },
+        function(username, password, done) {
+            model.User.findOne({ username: username }, function(err, user) {
+                if (err) { 
+                    return done(err); 
+                }
+                if (!user) {
+                    return done(null, false, { message: 'Incorrect username.' });
+                }
+                if (!user.validPassword(password)) {
+                    return done(null, false, { message: 'Incorrect password.' });
+                }
+                return done(null, user);
+            });
+        }
+    ));
+
+    passport.serializeUser(function(user, done) {
+        done(null, user._id);
+    });
+
+    passport.deserializeUser(function(id, done) {
+        model.User.findById(id, function(err, user) {
+            done(err, user);
+        });
+    });
 
     var default_room = 'default-room';
 
@@ -59,13 +91,19 @@ module.exports = function(io)
     });
 
     /* register page */
-    router.post('/api/login', function(req, res, next) {
-        var ok = api.loginUser(req.body.username, req.body.password);
-        res.type('application/json');
-        res.end(JSON.stringify({
-            ok: ok
-        }));
-    });
+    router.post('/api/login', passport.authenticate('local', { 
+            successRedirect: '/',
+            failureRedirect: '/login',
+            failureFlash: true
+        })
+    );
+    // router.post('/api/login', function(req, res, next) {
+    //     var ok = api.loginUser(req.body.username, req.body.password);
+    //     res.type('application/json');
+    //     res.end(JSON.stringify({
+    //         ok: ok
+    //     }));
+    // });
 
     /* socket.io */
     io.on('connection', function (socket) {
