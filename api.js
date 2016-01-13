@@ -2,7 +2,8 @@ var model = require('./model');
 
 // callback(err, user)
 function registerUser(username, password, callback) {
-    var user = new model.User({username: username, password: password});
+    var user = new model.User({username: username});
+    user.setPassword(password);
     user.save(function(err, user) {
         if (err) {
             console.error(err);

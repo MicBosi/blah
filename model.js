@@ -6,6 +6,11 @@ db.once('open', function() {
     // ok
 });
 
+var crypto = require('crypto');
+var sha1sum = function(input){
+    return crypto.createHash('sha1').update(JSON.stringify(input)).digest('hex')
+}
+
 // setup auto increment
 var autoIncrement = require('mongoose-auto-increment');
 autoIncrement.initialize(mongoose);
@@ -34,6 +39,12 @@ userSchema.plugin(autoIncrement.plugin, {
     startAt: 1,
     incrementBy: 1
 });
+userSchema.methods.validPassword = function(password) {
+    return this.password == sha1sum(password);
+}
+userSchema.methods.setPassword = function(password) {
+    this.password = sha1sum(password);
+}
 
 // grab Message model
 var Message = mongoose.model('Message', messageSchema);
