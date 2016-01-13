@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/MicBosi/blah/issues"
   },
-  "homepage": "https://github.com/MicBosi/blah#readme"
+  "homepage": "https://github.com/MicBosi/blah#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
 }
