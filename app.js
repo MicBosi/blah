@@ -46,6 +46,10 @@ if (app.get('env') === 'development') {
   });
 }
 
+if (app.get('env') === 'development') {
+  app.locals.pretty = true;
+}
+
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
