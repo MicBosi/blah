@@ -3,7 +3,7 @@ module.exports = function(io)
     var express = require('express');
     var router = express.Router();
 
-    var messages = ["Welcome!"];
+    var history = ["Welcome!"];
     var clients = [];
 
     /* home page */
@@ -11,39 +11,38 @@ module.exports = function(io)
         res.render('index', { title: 'Blah' });
     });
 
-    /* poll new messages */
-    router.get('/poll/:count', function(req, res, next) {
-        var count = req.params.count;
-        if(messages.length > count) {
-            res.type('application/json');
-            res.send(JSON.stringify({
-                count: messages.length,
-                new_messages: messages.slice(count)
-            }));
-        } else {
-            clients.push(res);
-        }
-    });
-
-    /* send new message */
-    router.post('/msg/', function(req, res, next) {
-        var message = req.body.message;
-        messages.push(message);
-        while(clients.length > 0) {
-            var client = clients.pop();
-            client.type('application/json');
-            client.end(JSON.stringify({
-                count: messages.length,
-                new_messages: [message]
-            }));
-        }
-        res.end();
-    });
-
+    /* socket.io */
     io.on('connection', function (socket) {
-        socket.emit('news', { hello: 'world' });
-        socket.on('my other event', function (data) {
-            console.log(data);
+        // add to list of clients
+        clients.push(socket);
+        console.log('Connected socket id: ' + socket.id);
+        console.log('Sockets: ' + clients.length);
+
+        // dispatch current history
+        socket.emit('append-messages', {
+            new_messages: history
+        });
+
+        // catch new history
+        socket.on('post-message', function (data) {
+            var message = data.message;
+            history.push(message);
+            socket.emit('post-message-ok', {});
+            // dispatch new message to all clients
+            clients.forEach(function(s) {
+                s.emit('append-messages', {
+                    new_messages: [message]
+                });
+            });
+        });
+
+        socket.on('disconnect', function() {
+            // remove this socket from clients
+            clients = clients.filter(function(s) {
+                return s.id != socket.id;
+            });
+            console.log('Disconnected socket id: ' + socket.id);
+            console.log('Sockets: ' + clients.length);
         });
     });
 

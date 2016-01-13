@@ -9,46 +9,26 @@ html
         link(rel='stylesheet', href='/stylesheets/style.css')
 
     script.
-            var counter = 0;
-            function poll() {
-                $.ajax({
-                    method: 'GET',
-                    dataType: 'json',
-                    url: '/poll/'+counter, 
-                    success: function(response) {
-                        counter = response.count;
-                        var messages = $('#messages')[0];
-                        response.new_messages.forEach(function(message) {
-                            var p = document.createElement('p');
-                            $(p).html(message);
-                            messages.appendChild(p);
-                        });
-                        // elem.html(elem.html() + response.new_messages);
-                        poll();
-                    }
+            var socket = io.connect('http://localhost:3000');
+            socket.on('append-messages', function (data) {
+                // counter = data.count;
+                var messages = $('#messages')[0];
+                data.new_messages.forEach(function(message) {
+                    var p = document.createElement('p');
+                    $(p).html(message);
+                    messages.appendChild(p);
                 });
-            }
+            });
+            socket.on('post-message-ok', function(data) {
+                $('#message')[0].value = '';
+                $('#message')[0].readOnly = false;
+            });
             function sendMessage() {
                 $('#message')[0].readOnly = true;
                 var message = $('#message')[0].value;
-                $.ajax({
-                    method: 'POST',
-                    url: '/msg/',
-                    data: {
-                        message: message
-                    },
-                    success: function() {
-                        $('#message')[0].value = '';
-                        $('#message')[0].readOnly = false;
-                    }
+                socket.emit('post-message', {
+                    message: message
                 });
             }
-            poll();
-            // socket.io test
-            var socket = io.connect('http://localhost:3000');
-            socket.on('news', function (data) {
-                console.log(data);
-                socket.emit('my other event', { my: 'data' });
-            });
     body
         block content
