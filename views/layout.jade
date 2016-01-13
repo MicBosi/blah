@@ -11,4 +11,21 @@ html
         link(rel='stylesheet', href='/font-awesome/css/font-awesome.min.css')
         script(src='/javascripts/blah.js')
     body
+        
+        span(class="pull-right text-muted")= version
+        h3
+            a(href="/" title="Messages")
+                i(class="fa fa-comment-o")
+            &nbsp; &nbsp;
+            a(href="/register" title="Register")
+                i(class="fa fa-user-plus")
+            &nbsp; &nbsp;
+            a(href="/login" title="Log in")
+                i(class="fa fa-sign-in")
+            &nbsp; &nbsp;
+            a(href="/logout" title="Log out")
+                i(class="fa fa-power-off")
+        div(style="clear:both;")
+        h1 #{title}
+        p Welcome to #{title} the awesome communicator.
         block content

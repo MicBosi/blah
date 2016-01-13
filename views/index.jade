@@ -1,14 +1,10 @@
 extends layout
 
 block content
-    span(class="pull-right text-muted")= version
-    div(style="clear:both;")
-    h1 #{title}
-    p Welcome to #{title} the awesome communicator.
     p 
         textarea(id="message" rows="5" style="width: 100%;")
     p 
-        a(href="#" class="btn btn-success pull-right" onclick="sendMessage(); event.stopPropagation();") Send Message
+        a(href="#" class="btn btn-success pull-right" onclick="Blah.sendMessage(); return false;") Send Message
         div(style="clear:both;")
     hr
     p(id="messages")
