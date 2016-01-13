@@ -62,9 +62,5 @@ var Blah = function()
                 }
             });
         },
-
-        login: function() {
-            console.log('login');
-        }
     }
 }();
