@@ -1,11 +1,12 @@
 extends layout
 
 block content
-    h1= title
+    h1 #{title}
     p Welcome to #{title} the awesome communicator.
     p 
-        textarea(rows="5" cols="80")
+        textarea(id="message" rows="5" style="width: 100%;")
     p 
-        a(href="#" class="btn btn-success") Send
+        a(href="#" class="btn btn-success pull-right" onclick="sendMessage(); event.stopPropagation();") Send Message
+        div(style="clear:both;")
     hr
     p(id="messages")

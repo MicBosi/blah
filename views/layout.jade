@@ -1,10 +1,47 @@
 doctype html
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
-    link(rel='javascript', href='/javascripts/jquery-2.1.4.min.js')
-    link(rel='javascript', href='/bootstrap/js/bootstrap.min.js')
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+    head
+        title #{title}
+        link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+        script(src='/javascripts/jquery-2.1.4.min.js')
+        script(src='/bootstrap/js/bootstrap.min.js')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+
+    script.
+            var counter = 0;
+            function poll() {
+                $.ajax({
+                    method: 'GET',
+                    dataType: 'json',
+                    url: '/poll/'+counter, 
+                    success: function(response) {
+                        counter = response.count;
+                        var messages = $('#messages')[0];
+                        response.new_messages.forEach(function(message) {
+                            var p = document.createElement('p');
+                            $(p).html(message);
+                            messages.appendChild(p);
+                        });
+                        // elem.html(elem.html() + response.new_messages);
+                        poll();
+                    }
+                });
+            }
+            function sendMessage() {
+                $('#message')[0].readOnly = true;
+                var message = $('#message')[0].value;
+                $.ajax({
+                    method: 'POST',
+                    url: '/msg/',
+                    data: {
+                        message: message
+                    },
+                    success: function() {
+                        $('#message')[0].value = '';
+                        $('#message')[0].readOnly = false;
+                    }
+                });
+            }
+            poll();
+    body
+        block content
