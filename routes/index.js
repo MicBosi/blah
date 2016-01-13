@@ -50,7 +50,7 @@ module.exports = function(io, passport)
 
     /* home page */
     router.get('/', function(req, res, next) {
-        res.render('index', { title: 'Blah', version: 'v1.2.0' });
+        res.render('index', { title: 'Blah', version: 'v1.2.0', username: req.user ? req.user.username : 'guest' });
     });
 
     /* login page */
@@ -94,7 +94,7 @@ module.exports = function(io, passport)
     router.post('/api/login', passport.authenticate('local', { 
             successRedirect: '/',
             failureRedirect: '/login',
-            failureFlash: true
+            failureFlash: false
         })
     );
     // router.post('/api/login', function(req, res, next) {
