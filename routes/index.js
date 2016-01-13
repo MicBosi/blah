@@ -40,7 +40,7 @@ module.exports = function(io)
 
     /* home page */
     router.get('/', function(req, res, next) {
-        res.render('index', { title: 'Blah' });
+        res.render('index', { title: 'Blah', version: 'v1.2.0' });
     });
 
     /* socket.io */
