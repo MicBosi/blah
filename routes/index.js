@@ -1,10 +1,11 @@
 module.exports = function(io) 
-{ 
+{
     var express = require('express');
     var router = express.Router();
 
     var history = ["Welcome!"];
-    var clients = [];
+
+    var default_room = 'default-room';
 
     /* home page */
     router.get('/', function(req, res, next) {
@@ -13,36 +14,34 @@ module.exports = function(io)
 
     /* socket.io */
     io.on('connection', function (socket) {
-        // add to list of clients
-        clients.push(socket);
-        console.log('Connected socket id: ' + socket.id);
-        console.log('Sockets: ' + clients.length);
+        socket.join(default_room);
 
-        // dispatch current history
+        // grab current history
         socket.emit('append-messages', {
             new_messages: history
         });
 
-        // catch new history
         socket.on('post-message', function (data) {
+            // add message to history
             var message = data.message;
             history.push(message);
+
+            // confirm message delivery
             socket.emit('post-message-ok', {});
-            // dispatch new message to all clients
-            clients.forEach(function(s) {
-                s.emit('append-messages', {
-                    new_messages: [message]
-                });
+
+            // dispatch new message to me and all other clients
+            socket.emit('append-messages', {
+                new_messages: [message]
+            });
+            socket.to(default_room).emit('append-messages', {
+                new_messages: [message]
             });
         });
 
         socket.on('disconnect', function() {
-            // remove this socket from clients
-            clients = clients.filter(function(s) {
-                return s.id != socket.id;
-            });
+            // Will leave room automatically
+            // socket.leave(default_room);
             console.log('Disconnected socket id: ' + socket.id);
-            console.log('Sockets: ' + clients.length);
         });
     });
 
