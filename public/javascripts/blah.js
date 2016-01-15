@@ -1,7 +1,7 @@
 var Blah = function() 
 {
     "use strict";
-    var socket = io.connect('http://localhost:3000');
+    var socket = io.connect('//:80');
 
     // chat view route
     if (document.location.pathname == '/') {
