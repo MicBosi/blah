@@ -1,3 +1,7 @@
+// TODO:
+// - Access control
+// - Don't index fields we dont query agains
+
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/blah');
 var db = mongoose.connection;
@@ -217,9 +221,9 @@ function unsubscribeUser(user_id, channel_id, callback) {
 
 module.exports = {
     // docs
-    Message: Message,
     User: User,
     Channel: Channel,
+    Message: Message,
 
     // methods
     registerUser: registerUser,

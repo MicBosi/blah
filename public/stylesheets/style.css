@@ -66,21 +66,21 @@ input[type=text] {
     text-align: right;
 }
 
-#chat-add > div {
+#channel-add > div {
     margin-bottom: 1em;
 }
 
-#new-chat-name {
+#new-channel-name {
     display: inline-block;
     width: 220px;
 }
 
-#chat-list > div {
+#channel-list > div {
     margin-bottom: 1em; 
     line-height: 34px;    
 }
 
-#chat-list .chat-name {
+#channel-list .channel-name {
     display: inline-block;
     width: 220px;
     background-color: #F0F0F0;
@@ -88,7 +88,7 @@ input[type=text] {
     cursor: pointer;
 }
 
-#chat-list .chat-name:hover {
+#channel-list .channel-name:hover {
     background-color: lightgray;
 }
 

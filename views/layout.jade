@@ -2,25 +2,25 @@ extends plain_layout
 
 block plain_content
     div(id="dashboard")
-        div(id="chat-add")
+        div(id="channel-add")
             div
-                input(id="new-chat-name" type="text")
+                input(id="new-channel-name" type="text" placeholder="Create new channel")
                 a(class="btn btn-success channel-button pull-right" title="New Channel")
                     i(class="fa fa-plus")
                 div(style="clear: both;")
-        div(id="chat-list")
+        div(id="channel-list")
             div
                 a(class="btn btn-success channel-button pull-right" title="Leave Channel")
                     i(class="fa fa-sign-out")
-                span(class="chat-name") Secret Stories
+                span(class="channel-name") Secret Stories
                 div(style="clear: both;")
             div
-                span(class="chat-name") Secret Appointments
+                span(class="channel-name") Secret Appointments
                 a(class="btn btn-success channel-button pull-right" title="Manage Channel")
                     i(class="fa fa-ellipsis-v")
                 div(style="clear: both;")
             div
-                span(class="chat-name") Awesome Results
+                span(class="channel-name") Awesome Results
                 a(class="btn btn-success channel-button pull-right" title="New Chat")
                     i(class="fa fa-ellipsis-v")
                 div(style="clear: both;")
