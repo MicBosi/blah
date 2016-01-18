@@ -52,7 +52,12 @@ module.exports = function(io, passport)
 
     /* home page */
     router.get('/', function(req, res, next) {
-        res.render('index', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
+        if (req.user) {
+            res.render('index', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
+        } else {
+            res.redirect('/register');
+            res.end();
+        }
     });
 
     /* login page */

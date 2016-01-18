@@ -3,7 +3,7 @@ var Blah = function()
     "use strict";
     var socket = io.connect('//:443');
 
-    // chat view route
+    // view messages route
     if (document.location.pathname == '/') {
         var seen_messages = new Set();
         socket.on('append-messages', function (data) {
@@ -51,7 +51,7 @@ var Blah = function()
         });
     }
 
-    // self reveal Blah module
+    // self reveal module
 
     return {
         sendMessage: function() {
