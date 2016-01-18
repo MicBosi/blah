@@ -1,6 +1,8 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
@@ -15,7 +17,7 @@ input[type=text] {
     display: block;
     width: 900px;
     padding: 0;
-    margin: 0 auto;
+    margin: 1em auto;
 }
 
 #dashboard {
@@ -50,8 +52,18 @@ input[type=text] {
 }
 
 #menu {
-    font-size: 25px;
+    /*padding-top: 1em;*/
+    padding-right: 1em;
+    /*padding-bottom: 1em;*/
+    /*padding-left: 1em;*/
+    margin: 0;
+    /*font-size: 25px;*/
     margin-bottom: 1em;
+    /*text-align: right;*/
+}
+
+#user-info {
+    text-align: right;
 }
 
 #chat-add > div {

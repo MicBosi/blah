@@ -12,12 +12,10 @@ html
         script(src='/javascripts/blah.js')
     body
         div(id="wrapper")
-            h1 
-                span #{title}
-                span &nbsp;
-            p(class="text-muted") The awesome communicator, #{version}            
-            p 
-                div(id="menu")
+            div(id="menu")
+                div(id="user-info")
+                    span #{username}
+                    span &nbsp; &nbsp;
                     a(href="/" title="Messages")
                         i(class="fa fa-comment-o")
                     span &nbsp; &nbsp;
@@ -30,14 +28,18 @@ html
                     a(href="/logout" title="Log out")
                         i(class="fa fa-power-off")
                     div(style="clear:both;")
-             div(id="dashboard")
-                 div(id="chat-add")
+                h1
+                    span #{title}
+                    span &nbsp;
+                p(class="text-muted") The awesome communicator, #{version}            
+            div(id="dashboard")
+                div(id="chat-add")
                     div
                         input(id="new-chat-name" type="text")
                         a(class="btn btn-success channel-button pull-right" title="New Channel")
                             i(class="fa fa-plus")
                         div(style="clear: both;")
-                 div(id="chat-list")
+                div(id="chat-list")
                     div
                         a(class="btn btn-success channel-button pull-right" title="Leave Channel")
                             i(class="fa fa-sign-out")
@@ -55,3 +57,4 @@ html
                         div(style="clear: both;")
             div(id="content")
                 block content
+            div(style="clear:both;")
