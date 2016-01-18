@@ -72,10 +72,25 @@ var Blah = function()
                 },
                 success: function(data) {
                     $('#register-error').text('');
-                    document.location = '/';
+                        $.ajax({
+                            method: 'POST',
+                            url: '/api/login',
+                            data: {
+                                username: $('#username')[0].value,
+                                password: $('#password')[0].value,
+                            },
+                            success: function(data) {
+                                $('#register-error').text('');
+                                document.location = '/';
+                            },
+                            error: function(xhr) {
+                                var data = xhr.responseJSON;
+                                $('#register-error').text(data.error);
+                            }
+                        });
                 },
                 error: function(xhr) {
-                     var data = xhr.responseJSON;
+                    var data = xhr.responseJSON;
                     $('#register-error').text(data.error);
                 }
             });

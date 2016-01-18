@@ -53,7 +53,7 @@ module.exports = function(io, passport)
     /* home page */
     router.get('/', function(req, res, next) {
         if (req.user) {
-            res.render('index', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
+            res.render('index', { title: APP_TITLE, version: APP_VERSION, username: req.user.username });
         } else {
             res.redirect('/register');
             res.end();
@@ -62,25 +62,36 @@ module.exports = function(io, passport)
 
     /* login page */
     router.get('/login', function(req, res, next) {
-        res.render('login', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
+        if (req.user) {
+            res.render('flash', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
+        } else {
+            res.render('login', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
+        }
     });
 
     /* register page */
     router.get('/register', function(req, res, next) {
-        res.render('register', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
+        if (req.user) {
+            res.render('flash', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
+        } else {
+            res.render('register', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
+        }
     });
 
     /* logout page */
     router.get('/logout', function(req, res, next) {
         /* logout logic */
-        // ...
+        req.session.destroy();
+        req.logout();
+        res.clearCookie('connect.sid');
         /* redirect to home page */
-        res.redirect('/login');
+        res.redirect('/register');
         res.end();
     });
 
     /* register page */
     router.post('/api/register', function(req, res, next) {
+        console.log('----');
         model.registerUser(
             req.body.username, 
             req.body.password, 
@@ -90,6 +101,7 @@ module.exports = function(io, passport)
                 if (err) {
                     error = err.name == 'ValidationError' ? 'Invalid username or password.' : err.message;
                     error = err.code == 11000 ? 'Username already taken.' : error;
+                    error = err.message;
                 }
                 res.type('application/json');
                 res.status(ok ? 200 : 400);
@@ -138,6 +150,9 @@ module.exports = function(io, passport)
 
         socket.on('post-message', function (data) {
             model.postMessage({
+                    // TODO: 
+                    // - select username
+                    // - select channel_id
                     author: 'guest',
                     channel_id: 1,
                     type: 'message',

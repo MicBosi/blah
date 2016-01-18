@@ -1,4 +1,5 @@
 // TODO:
+// - Show login & logout errors
 // - Access control
 // - Don't index fields we dont query agains
 
@@ -77,16 +78,18 @@ var Channel = mongoose.model('Channel', channelSchema);
 
 // DANGER ZONE
 // uncomment to disable persitency
-// Message.remove({}, function(err) {});
-// User.remove({}, function(err) {});
+User.remove({}, function(err) {});
+Message.remove({}, function(err) {});
 Channel.remove({}, function(err) {});
 
 function registerUser(username, password, callback) {
     // TODO: check permissions
     // - user is not logged in
     // - validate name
+    // - validate password
+    // - name must != 'guest'
     // - must be unique name
-    var user = new model.User({username: username});
+    var user = new User({username: username});
     user.setPassword(password);
     user.save(function(err, user) {
         if (err) {
