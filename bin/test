@@ -1,49 +1,49 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-
 var app = require('../app');
 var model = require('../model');
 var async = require('async');
 
+// TODO: 
+// - use separate db for testing
+// - completely reset db from scratch
+// - test all model.* functions
+
+// --- mini test suite ---
+
+// true if "a" is an array
 function isArray(a) {
     return Object.prototype.toString.call( a ) === '[object Array]';
 }
 
-var assert = {
-    // obj1 contains obj2
-    contains: function(obj1, obj2) {
-        for(var k in obj2) { 
-            if (obj2.hasOwnProperty(k)) { 
-                if (obj1[k] != obj2[k]) {
-                    var msg = JSON.stringify(obj1) + ' does not contain ' + JSON.stringify(obj2);
-                    throw msg;
+// obj1 contains obj2
+function contains(obj1, obj2) {
+    for(var k in obj2) { 
+        if (obj2.hasOwnProperty(k)) { 
+            if (isArray(obj1[k]) && isArray(obj2[k])) {
+                console.log(JSON.stringify(obj1[k]) + ' ?? ' + JSON.stringify(obj2[k]));
+                if (JSON.stringify(obj1[k]) != JSON.stringify(obj2[k]))  {
+                    return false;
                 }
-            } 
-        };
+            } else
+            if (obj1[k] != obj2[k]) {
+                return false;
+            }
+        } 
+    };
+    return true;
+}
+
+var assert = {
+    contains: function(obj1, obj2) {
+        if (!contains(obj1, obj2)) {
+            var msg = JSON.stringify(obj1) + ' does not contain ' + JSON.stringify(obj2);
+            throw msg;
+        }
     },
 
     // obj1 is in list
     find: function(obj2, list) {
-        function contains(obj1, obj2) {
-            for(var k in obj2) { 
-                if (obj2.hasOwnProperty(k)) { 
-                    if (isArray(obj1[k]) && isArray(obj2[k])) {
-                        console.log(JSON.stringify(obj1[k]) + ' ?? ' + JSON.stringify(obj2[k]));
-                        if (JSON.stringify(obj1[k]) != JSON.stringify(obj2[k]))  {
-                            return false;
-                        }
-                    } else
-                    if (obj1[k] != obj2[k]) {
-                        return false;
-                    }
-                } 
-            };
-            return true;
-        }
-
         for(var i=0; i<list.length; ++i) {
             var obj1 = list[i];
             if (contains(obj1, obj2)) {
@@ -57,10 +57,12 @@ var assert = {
     }
 }
 
-// run tests
+// --- run tests ---
+
 var new_channel_id = null;
 var new_message_id1 = null;
 var new_message_id2 = null;
+
 async.series([
     function(callback) {
         model.createChannel(
@@ -294,6 +296,7 @@ async.series([
         );
     },
 ],
+
 // global callback
 function(err, results) {
     if (err) {
