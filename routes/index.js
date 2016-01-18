@@ -2,6 +2,8 @@ module.exports = function(io, passport)
 {
     var api = require('../api');
     var model = require('../model');
+    const APP_TITLE = 'Blah';
+    const APP_VERSION = '1.2.0';
 
     // grab Message model
     var Message = model.Message;
@@ -50,17 +52,17 @@ module.exports = function(io, passport)
 
     /* home page */
     router.get('/', function(req, res, next) {
-        res.render('index', { title: 'Blah', version: 'v1.2.0', username: req.user ? req.user.username : 'guest' });
+        res.render('index', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
     });
 
     /* login page */
     router.get('/login', function(req, res, next) {
-        res.render('login', { title: 'Blah', version: 'v1.2.0' });
+        res.render('login', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
     });
 
     /* register page */
     router.get('/register', function(req, res, next) {
-        res.render('register', { title: 'Blah', version: 'v1.2.0' });
+        res.render('register', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
     });
 
     /* logout page */
