@@ -132,7 +132,7 @@ module.exports = function(io, passport)
         socket.on('post-message', function (data) {
             model.postMessage({
                     author: 'guest',
-                    channel: 1,
+                    channel_id: 1,
                     type: 'message',
                     message: data.message,
                     attachment_path: '',

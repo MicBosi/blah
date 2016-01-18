@@ -31,7 +31,7 @@ channelSchema.plugin(autoIncrement.plugin, {
 
 // Message
 var messageSchema = mongoose.Schema({
-    channel:         { type: Number, required: true},  // the channel id this message belongs to
+    channel_id:      { type: Number, required: true},  // the channel id this message belongs to
     type:            { type: String, required: true},  // type of message: message|attachment
     message:         { type: String, required: false}, // message text
     attachment_path: { type: String, required: false}, // path to the attachment
@@ -118,7 +118,7 @@ function getMessages(channel_id, callback) {
     // - user is logged in
     // - user is subscribed (incl. owner)
     Message.find(
-        {channel: channel_id}, // filters
+        {channel_id: channel_id}, // filters
         null, // columns
         {     // options
             sort: {'_id': +1}
@@ -153,7 +153,7 @@ function deleteMessage(channel_id, message_id, callback) {
     // - user is logged in
     // - only owner or user can do it
     Message.update(
-        {_id: message_id, channel: channel_id},
+        {_id: message_id, channel_id: channel_id},
         {deleted: true},
         callback // function(err, raw)
     );
