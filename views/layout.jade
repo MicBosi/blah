@@ -11,21 +11,47 @@ html
         link(rel='stylesheet', href='/font-awesome/css/font-awesome.min.css')
         script(src='/javascripts/blah.js')
     body
-        
-        span(class="pull-right text-muted")= version
-        h3
-            a(href="/" title="Messages")
-                i(class="fa fa-comment-o")
-            span &nbsp; &nbsp;
-            a(href="/register" title="Register")
-                i(class="fa fa-user-plus")
-            span &nbsp; &nbsp;
-            a(href="/login" title="Log in")
-                i(class="fa fa-sign-in")
-            span &nbsp; &nbsp;
-            a(href="/logout" title="Log out")
-                i(class="fa fa-power-off")
-        div(style="clear:both;")
-        h1 #{title}
-        p Welcome to #{title} the awesome communicator.
-        block content
+        div(id="wrapper")
+            h1 
+                span #{title}
+                span &nbsp;
+            p(class="text-muted") The awesome communicator, #{version}            
+            p 
+                div(id="menu")
+                    a(href="/" title="Messages")
+                        i(class="fa fa-comment-o")
+                    span &nbsp; &nbsp;
+                    a(href="/register" title="Register")
+                        i(class="fa fa-user-plus")
+                    span &nbsp; &nbsp;
+                    a(href="/login" title="Log in")
+                        i(class="fa fa-sign-in")
+                    span &nbsp; &nbsp;
+                    a(href="/logout" title="Log out")
+                        i(class="fa fa-power-off")
+                    div(style="clear:both;")
+             div(id="dashboard")
+                 div(id="chat-add")
+                    div
+                        input(id="new-chat-name" type="text")
+                        a(class="btn btn-success channel-button pull-right" title="New Channel")
+                            i(class="fa fa-plus")
+                        div(style="clear: both;")
+                 div(id="chat-list")
+                    div
+                        a(class="btn btn-success channel-button pull-right" title="Leave Channel")
+                            i(class="fa fa-sign-out")
+                        span(class="chat-name") Secret Stories
+                        div(style="clear: both;")
+                    div
+                        span(class="chat-name") Secret Appointments
+                        a(class="btn btn-success channel-button pull-right" title="Manage Channel")
+                            i(class="fa fa-ellipsis-v")
+                        div(style="clear: both;")
+                    div
+                        span(class="chat-name") Awesome Results
+                        a(class="btn btn-success channel-button pull-right" title="New Chat")
+                            i(class="fa fa-ellipsis-v")
+                        div(style="clear: both;")
+            div(id="content")
+                block content
