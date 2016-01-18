@@ -11,9 +11,11 @@ var Blah = function()
             var messages = $('#messages')[0];
             data.new_messages.forEach(function(msg_data) {
                 if (!seen_messages.has(msg_data._id)) {
+                    // console.log(msg_data);
+                    console.log(msg_data._id + '>' + msg_data.date);
                     seen_messages.add(msg_data._id)
                     var p = document.createElement('p');
-                    var date = new Date(msg_data.time);
+                    var date = new Date(msg_data.date);
                     var date_string = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
                     var template = _.template("<blockquote><p>(<%= _id %>) <b><%= author %></b>: <%= message %></p><footer><%= date_string %></footer></blockquote>");
                     $(p).html(template({

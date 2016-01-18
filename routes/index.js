@@ -131,9 +131,15 @@ module.exports = function(io, passport)
         socket.on('post-message', function (data) {
             // add message to history
             var msg_data = {
-                message: data.message,
                 author: 'guest',
-                time: new Date().getTime()
+                channel: 'default',
+                type: 'message',
+                message: data.message,
+                attachment_path: '',
+                attachment_name: '',
+                attachment_size: 0,
+                deleted: false,
+                date: new Date().getTime(), // now
             };
 
             var message = new Message(msg_data);

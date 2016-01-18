@@ -17,9 +17,15 @@ autoIncrement.initialize(mongoose);
 
 // Message
 var messageSchema = mongoose.Schema({
-    message: String,
-    author: String,
-    time: Number
+    channel:         { type: String, required: true},  // the channel this message belongs to
+    type:            { type: String, required: true},  // type of message: message|attachment
+    message:         { type: String, required: false},  // message text
+    attachment_path: { type: String, required: false},  // path to the attachment
+    attachment_name: { type: String, required: false},  // user friendly name of the attachment
+    attachment_size: { type: Number, required: false},  // size in bytes of the attachment
+    deleted:         { type: Boolean, required: true}, // whether the message has been deleted
+    author:          { type: String, required: true},  // the username of this message
+    date:            { type: Number, required: true}  // timestamp of the message
 });
 messageSchema.plugin(autoIncrement.plugin, {
     model: 'Message',
