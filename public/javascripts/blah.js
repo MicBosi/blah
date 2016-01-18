@@ -9,6 +9,7 @@ var Blah = function()
         socket.on('append-messages', function (data) {
             // counter = data.count;
             var messages = $('#messages')[0];
+            var delay = 200;
             data.new_messages.forEach(function(msg_data) {
                 if (!seen_messages.has(msg_data._id)) {
                     // console.log(msg_data);
@@ -25,7 +26,14 @@ var Blah = function()
                         date_string: date_string
                     }));
                     // $(p).html(msg_data._id + ': ' + msg_data.message + '<br><footer>' + date_string + '</footer>');
-                    messages.insertBefore(p, messages.firstChild);
+                    setTimeout(
+                        function() {
+                            $(p).fadeIn(400);
+                            messages.appendChild(p);
+                        }, 
+                        delay   
+                    );
+                    delay += 200;
                 }
             });
         });

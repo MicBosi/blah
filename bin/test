@@ -1,0 +1,249 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var model = require('../model');
+var async = require('async');
+
+// run tests
+(function runTests() {
+    var new_channel_id = null;
+    var new_message_id = null;
+    async.series([
+        function(callback) {
+            model.createChannel(
+                /*user_id*/1, 
+                /*channel_name*/ "Buzzy", 
+                function(err, channel) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('New channel:');
+                    console.log(channel);
+                    new_channel_id = channel._id;
+                    callback();;
+                }
+            );
+        },
+        function(callback) {
+            model.createChannel(
+                /*user_id*/9, 
+                /*channel_name*/ "Grumpy", 
+                function(err, channel) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('New channel:');
+                    console.log(channel);
+                    callback();;
+                }
+            );
+        },
+        function(callback) {
+            model.subscribeUser(
+                /*user_id*/2, 
+                /*channel_id*/new_channel_id,
+                function(err, raw) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('subscribeUser(): The raw response from Mongo was:\n', raw);
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            model.subscribeUser(
+                /*user_id*/3, 
+                /*channel_id*/new_channel_id,
+                function(err, raw) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('subscribeUser(): The raw response from Mongo was:\n', raw);
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            model.subscribeUser(
+                /*user_id*/2, 
+                /*channel_id*/new_channel_id,
+                function(err, raw) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('subscribeUser(): The raw response from Mongo was:\n', raw);
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            model.subscribeUser(
+                /*user_id*/3, 
+                /*channel_id*/new_channel_id,
+                function(err, raw) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('subscribeUser(): The raw response from Mongo was:\n', raw);
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            // inspect channels
+            model.Channel.find(
+                null, // filters
+                null, // columns
+                null, // options
+                function(err, channels) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('Found channels:');
+                    console.log(channels);
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            model.unsubscribeUser(
+                /*user_id*/3, 
+                /*channel_id*/new_channel_id,
+                function(err, raw) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('subscribeUser(): The raw response from Mongo was:\n', raw);
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            // inspect channels
+            model.Channel.find(
+                null, // filters
+                null, // columns
+                null, // options
+                function(err, channels) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('Found channels:');
+                    console.log(channels);
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            model.deleteChannel(
+                new_channel_id, 
+                function(err, raw) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('Channel deleted:', new_channel_id);
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            // inspect channels
+            model.Channel.find(
+                null, // filters
+                null, // columns
+                null, // options
+                function(err, channels) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('Found channels:');
+                    console.log(channels);
+                    console.log('--- --- ---');
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            model.postMessage({
+                    author: 'guest',
+                    channel: new_channel_id,
+                    type: 'message',
+                    message: 'Ciao! come va?',
+                    attachment_path: '',
+                    attachment_name: '',
+                    attachment_size: 0,
+                    deleted: false,
+                    date: new Date().getTime(), // now
+                }, 
+                function(err, message) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('Posted message:');
+                    console.log(message);
+                    new_message_id = message._id;
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            model.postMessage({
+                    author: 'guest',
+                    channel: new_channel_id,
+                    type: 'message',
+                    message: 'Double blind randomized control message.',
+                    attachment_path: '',
+                    attachment_name: '',
+                    attachment_size: 0,
+                    deleted: false,
+                    date: new Date().getTime(), // now
+                }, 
+                function(err, message) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('Posted message:');
+                    console.log(message);
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            model.deleteMessage(
+                /*channel_id*/new_channel_id,
+                /*message_id*/new_message_id, 
+                function(err, raw) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('Deleted message ' + new_message_id);
+                    callback();
+                }
+            );
+        },
+        function(callback) {
+            model.getMessages(
+                /*channel_id*/new_channel_id,
+                function(err, messages) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    console.log('Found messages:');
+                    console.log(messages);
+                    callback();
+                }
+            );
+        },
+    ],
+    // global callback
+    function(err, results) {
+        if (err) {
+            console.error(err);
+        }
+    });
+})();
