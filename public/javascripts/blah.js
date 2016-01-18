@@ -10,6 +10,9 @@ var Blah = function()
             // counter = data.count;
             var messages = $('#messages')[0];
             var delay = 200;
+            if (data.new_messages.length > 1) {
+                data.new_messages = data.new_messages.reverse();
+            }
             data.new_messages.forEach(function(msg_data) {
                 if (!seen_messages.has(msg_data._id)) {
                     // console.log(msg_data);
@@ -29,7 +32,11 @@ var Blah = function()
                     setTimeout(
                         function() {
                             $(p).fadeIn(400);
-                            messages.appendChild(p);
+                            if (data.new_messages.length > 1) {
+                                messages.appendChild(p);
+                            } else {
+                                messages.insertBefore(p, messages.firstChild);
+                            }
                         }, 
                         delay   
                     );
