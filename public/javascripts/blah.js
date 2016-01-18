@@ -7,16 +7,11 @@ var Blah = function()
     if (document.location.pathname == '/') {
         var seen_messages = new Set();
         socket.on('append-messages', function (data) {
-            // counter = data.count;
             var messages = $('#messages')[0];
             var delay = 200;
-            if (data.new_messages.length > 1) {
-                data.new_messages = data.new_messages.reverse();
-            }
+            var previous_p = null;
             data.new_messages.forEach(function(msg_data) {
                 if (!seen_messages.has(msg_data._id)) {
-                    // console.log(msg_data);
-                    console.log(msg_data._id + '>' + msg_data.date);
                     seen_messages.add(msg_data._id)
                     var p = document.createElement('p');
                     var date = new Date(msg_data.date);
@@ -28,19 +23,25 @@ var Blah = function()
                         message: msg_data.message,
                         date_string: date_string
                     }));
-                    // $(p).html(msg_data._id + ': ' + msg_data.message + '<br><footer>' + date_string + '</footer>');
+
                     setTimeout(
-                        function() {
-                            $(p).fadeIn(400);
-                            if (data.new_messages.length > 1) {
-                                messages.appendChild(p);
-                            } else {
-                                messages.insertBefore(p, messages.firstChild);
+                        (function(previous_p, p) { 
+                            return function() {
+                                $(p).fadeIn(400);
+                                
+                                if (previous_p == null) {
+                                    messages.insertBefore(p, messages.firstChild);
+                                } else {
+                                    // -> insertAfter(p, previous_p.nextSibling)
+                                    previous_p.parentNode.insertBefore(p, previous_p.nextSibling);
+                                }
                             }
-                        }, 
-                        delay   
+                        })(previous_p, p),
+                        delay
                     );
+
                     delay += 200;
+                    previous_p = p;
                 }
             });
         });

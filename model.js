@@ -121,7 +121,7 @@ function getMessages(channel_id, callback) {
         {channel_id: channel_id}, // filters
         null, // columns
         {     // options
-            sort: {'_id': +1}
+            sort: {'_id': -1}
         }, 
         callback // function(err, messages)
     );
