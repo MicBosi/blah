@@ -52,7 +52,7 @@ module.exports = function(io, passport)
     /* home page */
     router.get('/', function(req, res, next) {
         if (req.user) {
-            res.render('index', { title: config.app_name, version: config.app_version, username: req.user.username });
+            res.render('index', { title: config.app_name, version: config.app_version, user: JSON.stringify({_id:req.user._id, username: req.user.username}), username: req.user.username });
         } else {
             res.redirect('/register');
             res.end();
@@ -62,18 +62,18 @@ module.exports = function(io, passport)
     /* login page */
     router.get('/login', function(req, res, next) {
         if (req.user) {
-            res.render('flash', { title: config.app_name, version: config.app_version, username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
+            res.render('flash', { title: config.app_name, version: config.app_version, user: 'null', username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
         } else {
-            res.render('login', { title: config.app_name, version: config.app_version, username: req.user ? req.user.username : 'guest' });
+            res.render('login', { title: config.app_name, version: config.app_version, user: 'null', username: req.user ? req.user.username : 'guest' });
         }
     });
 
     /* register page */
     router.get('/register', function(req, res, next) {
         if (req.user) {
-            res.render('flash', { title: config.app_name, version: config.app_version, username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
+            res.render('flash', { title: config.app_name, version: config.app_version, user: 'null', username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
         } else {
-            res.render('register', { title: config.app_name, version: config.app_version, username: req.user ? req.user.username : 'guest' });
+            res.render('register', { title: config.app_name, version: config.app_version, user: 'null', username: req.user ? req.user.username : 'guest' });
         }
     });
 
@@ -138,8 +138,21 @@ module.exports = function(io, passport)
         
         socket.join(default_room);
 
+        // Send list of channels
+        model.getChannels(
+            socket.user._id,
+            function(err, channels) {
+                if(err) {
+                    console.error(err);
+                } else {
+                    // grab current history
+                    socket.emit('append-channels', channels);
+                }
+            }   
+        );
+
         // TODO: FIXME
-        var channel_id = 1;
+        var channel_id = 1; // choose highest channel?
         model.getMessages(
             channel_id,
             function(err, messages) {
@@ -147,12 +160,22 @@ module.exports = function(io, passport)
                     console.error(err);
                 } else {
                     // grab current history
-                    socket.emit('append-messages', {
-                        new_messages: messages
-                    });
+                    socket.emit('append-messages', messages);
                 }
             }   
         );
+
+        socket.on('create-channel', function (data) {
+            model.createChannel(socket.user._id, data.name, function(err, channel) {
+                if (err) {
+                    var msg = err.message;
+                    console.error(msg);
+                    return socket.emit('create-channel-error', {message:msg});
+                }
+                socket.emit('create-channel-ok', channel);
+                socket.emit('append-channels', [channel]);
+            });
+        });
 
         socket.on('post-message', function (data) {
             model.postMessage({
@@ -178,12 +201,8 @@ module.exports = function(io, passport)
                         socket.emit('post-message-ok', {});
 
                         // dispatch new message to me and all other clients
-                        socket.emit('append-messages', {
-                            new_messages: [message]
-                        });
-                        socket.to(default_room).emit('append-messages', {
-                            new_messages: [message]
-                        });
+                        socket.emit('append-messages', [message]);
+                        socket.to(default_room).emit('append-messages', [message]);
                     }
                 }
             );
