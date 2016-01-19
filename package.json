@@ -4,7 +4,7 @@
   "private": false,
   "scripts": {
     "start": "node ./bin/www",
-    "test":  "node ./bin/test"
+    "test": "node ./bin/test"
   },
   "license": "GPL-3.0",
   "repository": "https://github.com/MicBosi/blah",

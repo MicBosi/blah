@@ -2,6 +2,10 @@ var Blah = function()
 {
     "use strict";
     var socket = io.connect('//:443');
+    socket.on('error', function (data) {
+        console.log('error:');
+        console.log(data);
+    });
 
     // view messages route
     if (document.location.pathname == '/') {

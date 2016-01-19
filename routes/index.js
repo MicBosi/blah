@@ -1,9 +1,8 @@
 module.exports = function(io, passport) 
 {
+    var config = require('../config');
     var api = require('../api');
     var model = require('../model');
-    const APP_TITLE = 'Blah';
-    const APP_VERSION = '1.2.0';
 
     // grab Message model
     var Message = model.Message;
@@ -53,7 +52,7 @@ module.exports = function(io, passport)
     /* home page */
     router.get('/', function(req, res, next) {
         if (req.user) {
-            res.render('index', { title: APP_TITLE, version: APP_VERSION, username: req.user.username });
+            res.render('index', { title: config.app_name, version: config.app_version, username: req.user.username });
         } else {
             res.redirect('/register');
             res.end();
@@ -63,18 +62,18 @@ module.exports = function(io, passport)
     /* login page */
     router.get('/login', function(req, res, next) {
         if (req.user) {
-            res.render('flash', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
+            res.render('flash', { title: config.app_name, version: config.app_version, username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
         } else {
-            res.render('login', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
+            res.render('login', { title: config.app_name, version: config.app_version, username: req.user ? req.user.username : 'guest' });
         }
     });
 
     /* register page */
     router.get('/register', function(req, res, next) {
         if (req.user) {
-            res.render('flash', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
+            res.render('flash', { title: config.app_name, version: config.app_version, username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
         } else {
-            res.render('register', { title: APP_TITLE, version: APP_VERSION, username: req.user ? req.user.username : 'guest' });
+            res.render('register', { title: config.app_name, version: config.app_version, username: req.user ? req.user.username : 'guest' });
         }
     });
 
@@ -130,6 +129,13 @@ module.exports = function(io, passport)
 
     /* socket.io */
     io.on('connection', function (socket) {
+        if (socket.user) {
+            // console.log("Connected as user:", socket.user.username);
+        } else {
+            // console.log("Connected as user: <none>");
+            return;
+        }
+        
         socket.join(default_room);
 
         // TODO: FIXME
@@ -151,9 +157,10 @@ module.exports = function(io, passport)
         socket.on('post-message', function (data) {
             model.postMessage({
                     // TODO: 
+                    // - author should be user_id -> cached via Redis
                     // - select username
                     // - select channel_id
-                    author: 'guest',
+                    author: socket.user.username,
                     channel_id: 1,
                     type: 'message',
                     message: data.message,
@@ -162,7 +169,7 @@ module.exports = function(io, passport)
                     attachment_size: 0,
                     deleted: false,
                     date: new Date().getTime(), // now
-                },                
+                },
                 function(err, message) {
                     if (err) {
                         return console.error(err);
