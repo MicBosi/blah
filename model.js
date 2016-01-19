@@ -78,9 +78,9 @@ var Channel = mongoose.model('Channel', channelSchema);
 
 // DANGER ZONE
 // uncomment to disable persitency
-User.remove({}, function(err) {});
-Message.remove({}, function(err) {});
-Channel.remove({}, function(err) {});
+// User.remove({}, function(err) {});
+// Message.remove({}, function(err) {});
+// Channel.remove({}, function(err) {});
 
 function registerUser(username, password, callback) {
     // TODO: check permissions
@@ -101,6 +101,7 @@ function registerUser(username, password, callback) {
     });
 }
 
+// callback: function(err, channel)
 function createChannel(user_id, channel_name, callback) {
     // TODO: check permissions
     // - user is logged in
@@ -115,8 +116,18 @@ function createChannel(user_id, channel_name, callback) {
     channel.save(callback);
 }
 
-function listChannels(user_id, callback) {
-
+// callback: function(err, messages)
+function getChannels(user_id, callback) {
+    // TODO: check permissions
+    // - user is logged in
+    Channel.find(
+        {users: user_id}, // find "user_id" in "users" array
+        null, // columns
+        {     // options
+            sort: {'_id': -1}
+        }, 
+        callback // function(err, messages)
+    );
 }
 
 // callback: function(err, messages)
@@ -231,6 +242,7 @@ module.exports = {
     // methods
     registerUser: registerUser,
     createChannel: createChannel,
+    getChannels: getChannels,
     getMessages: getMessages,
     deleteChannel: deleteChannel,
     subscribeUser: subscribeUser,
