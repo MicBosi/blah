@@ -27,13 +27,16 @@ var Blah = function()
             if (!seen_channels.has(channel._id)) {
                 var channel_btn_title = channel.owner == Blah.user._id ? 'Manage' : 'Leave';
                 var channel_btn_class = channel.owner == Blah.user._id ? 'fa-ellipsis-v' : 'fa-sign-out';
-                var template = render_template('<span class="channel-name">{{name}}</span><a title="{{channel_btn_title}}" class="btn btn-success channel-button pull-right"><i class="fa {{channel_btn_class}}"></i></a><div style="clear: both;"></div>', {
+                var template = render_template('<span class="channel-name" onclick="Blah.selectChannel({{channel_id}});">{{name}}</span><a title="{{channel_btn_title}}" class="btn btn-success channel-button pull-right"><i class="fa {{channel_btn_class}}"></i></a><div style="clear: both;"></div>', {
+                    channel_id: channel._id,
                     name: channel.name,
                     channel_btn_title: channel_btn_title,
                     channel_btn_class: channel_btn_class
                 });
                 var div = document.createElement('div');
                 $(div).html(template);
+                $(div).attr('data-channel-id', channel._id);
+
 
                 setTimeout(
                     (function(previous_div, div) { 
@@ -114,6 +117,21 @@ var Blah = function()
     // reveal module
 
     return {
+
+        // methods
+
+        user: null,
+
+        current_channel_id: null,
+
+        // functions
+
+        selectChannel: function(channel_id) {
+            // select visually the channel
+            $('div[data-channel-id]').removeClass('selected');
+            $('div[data-channel-id=' + channel_id + ']').addClass('selected');
+        },
+
         sendMessage: function() {
             $('#message')[0].readOnly = true;
             var message = $('#message')[0].value;

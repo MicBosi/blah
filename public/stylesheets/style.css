@@ -80,7 +80,7 @@ input[type=text] {
     line-height: 34px;    
 }
 
-#channel-list .channel-name {
+#channel-list > div[data-channel-id] > .channel-name {
     display: inline-block;
     width: 220px;
     background-color: #F0F0F0;
@@ -88,8 +88,12 @@ input[type=text] {
     cursor: pointer;
 }
 
-#channel-list .channel-name:hover {
-    background-color: lightgray;
+#channel-list > div[data-channel-id] > .channel-name:hover {
+    background-color: #D0D0D0;
+}
+
+#channel-list > div[data-channel-id].selected > .channel-name {
+    background-color: #B0B0B0;
 }
 
 .channel-button {
