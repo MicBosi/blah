@@ -90,7 +90,6 @@ module.exports = function(io, passport)
 
     /* register page */
     router.post('/api/register', function(req, res, next) {
-        console.log('----');
         model.registerUser(
             req.body.username, 
             req.body.password, 
@@ -100,7 +99,7 @@ module.exports = function(io, passport)
                 if (err) {
                     error = err.name == 'ValidationError' ? 'Invalid username or password.' : err.message;
                     error = err.code == 11000 ? 'Username already taken.' : error;
-                    error = err.message;
+                    // error = err.message;
                 }
                 res.type('application/json');
                 res.status(ok ? 200 : 400);
@@ -151,19 +150,19 @@ module.exports = function(io, passport)
             }   
         );
 
-        // TODO: FIXME
-        var channel_id = 1; // choose highest channel?
-        model.getMessages(
-            channel_id,
-            function(err, messages) {
-                if(err) {
-                    console.error(err);
-                } else {
-                    // grab current history
-                    socket.emit('append-messages', messages);
-                }
-            }   
-        );
+        // // TODO: FIXME
+        // var channel_id = 1; // choose highest channel?
+        // model.getMessages(
+        //     channel_id,
+        //     function(err, messages) {
+        //         if(err) {
+        //             console.error(err);
+        //         } else {
+        //             // grab current history
+        //             socket.emit('append-messages', messages);
+        //         }
+        //     }   
+        // );
 
         socket.on('create-channel', function (data) {
             model.createChannel(socket.user._id, data.name, function(err, channel) {
@@ -177,6 +176,20 @@ module.exports = function(io, passport)
             });
         });
 
+        socket.on('select-channel', function (data) {
+            model.getMessages(
+                data.channel_id,
+                function(err, messages) {
+                    if(err) {
+                        console.error(err);
+                    } else {
+                        // grab current history
+                        socket.emit('append-messages', messages);
+                    }
+                }   
+            );
+        });
+
         socket.on('post-message', function (data) {
             model.postMessage({
                     // TODO: 
@@ -184,7 +197,7 @@ module.exports = function(io, passport)
                     // - select username
                     // - select channel_id
                     author: socket.user.username,
-                    channel_id: 1,
+                    channel_id: data.channel_id,
                     type: 'message',
                     message: data.message,
                     attachment_path: '',

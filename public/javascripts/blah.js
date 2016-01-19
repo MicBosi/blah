@@ -1,30 +1,37 @@
+// TODO:
+// - escape tags from messages
+// - allow line breaks in messages
+// - disallow empty comments
+
 var Blah = function() 
 {
     "use strict";
-    var socket = io.connect('//:443');
-    socket.on('error', function (data) {
+    var _socket = io.connect('//:443');
+    _socket.on('error', function (data) {
         console.log('error:');
         console.log(data);
     });
 
-    socket.on('create-channel-ok', function(channel) {
+    _socket.on('create-channel-ok', function(channel) {
         $('#create-channel-name')[0].value = '';
         $('#create-channel-name')[0].readOnly = false;
     });
 
-    socket.on('create-channel-error', function(data) {
+    _socket.on('create-channel-error', function(data) {
         // $('#create-channel-name')[0].value = '';
         $('#create-channel-name')[0].readOnly = false;
         console.log('New channel error: ' + JSON.stringify(data));
     });
 
-    var seen_channels = new Set();
-    socket.on('append-channels', function(channels) {
+    var _seen_channels = new Set();
+    _socket.on('append-channels', function(channels) {
+        var select_first_channel = true; // _seen_channels.size === 0;
         var channel_list = $('#channel-list')[0];
         var delay = 100;
         var previous_div = null;
         channels.forEach(function(channel) {
-            if (!seen_channels.has(channel._id)) {
+            if (!_seen_channels.has(channel._id)) {
+                _seen_channels.add(channel._id)
                 var channel_btn_title = channel.owner == Blah.user._id ? 'Manage' : 'Leave';
                 var channel_btn_class = channel.owner == Blah.user._id ? 'fa-ellipsis-v' : 'fa-sign-out';
                 var template = render_template('<span class="channel-name" onclick="Blah.selectChannel({{channel_id}});">{{name}}</span><a title="{{channel_btn_title}}" class="btn btn-success channel-button pull-right"><i class="fa {{channel_btn_class}}"></i></a><div style="clear: both;"></div>', {
@@ -41,13 +48,18 @@ var Blah = function()
                 setTimeout(
                     (function(previous_div, div) { 
                         return function() {
-                            $(div).fadeIn(800);
+                            $(div).fadeIn(400);
                             
                             if (previous_div == null) {
                                 channel_list.insertBefore(div, channel_list.firstChild);
                             } else {
                                 // -> insertAfter(div, previous_div.nextSibling)
                                 previous_div.parentNode.insertBefore(div, previous_div.nextSibling);
+                            }
+
+                            // select top channel if _seen_channels is empty
+                            if(select_first_channel && channel._id == channels[0]._id) {
+                                Blah.selectChannel(channels[0]._id);
                             }
                         }
                     })(previous_div, div),
@@ -57,17 +69,23 @@ var Blah = function()
                 delay += 100;
                 previous_div = div;
             }
-        })
+        });
     });
 
-    var seen_messages = new Set();
-    socket.on('append-messages', function (new_messages) {
+    var _seen_messages = new Set();
+    _socket.on('append-messages', function (new_messages) {
+        // Ignore messages for other channels for the moment
+        if (new_messages.length) {
+            if (new_messages[0].channel_id != Blah.current_channel_id) {
+                return;
+            }
+        }
         var messages = $('#messages')[0];
-        var delay = 100;
+        var delay = 50;
         var previous_p = null;
         new_messages.forEach(function(msg_data) {
-            if (!seen_messages.has(msg_data._id)) {
-                seen_messages.add(msg_data._id)
+            if (!_seen_messages.has(msg_data._id)) {
+                _seen_messages.add(msg_data._id)
                 var p = document.createElement('p');
                 var date = new Date(msg_data.date);
                 var date_string = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
@@ -82,29 +100,33 @@ var Blah = function()
                 setTimeout(
                     (function(previous_p, p) { 
                         return function() {
-                            $(p).fadeIn(800);
+                            $(p).fadeIn(400);
                             
                             if (previous_p == null) {
                                 messages.insertBefore(p, messages.firstChild);
                             } else {
                                 // -> insertAfter(p, previous_p.nextSibling)
-                                previous_p.parentNode.insertBefore(p, previous_p.nextSibling);
+                                if (previous_p.parentNode) {
+                                    previous_p.parentNode.insertBefore(p, previous_p.nextSibling);
+                                }
                             }
                         }
                     })(previous_p, p),
                     delay
                 );
 
-                delay += 100;
+                delay += 50;
                 previous_p = p;
             }
         });
     });
 
-    socket.on('post-message-ok', function(data) {
+    _socket.on('post-message-ok', function(data) {
         $('#message')[0].value = '';
         $('#message')[0].readOnly = false;
     });
+
+    // utils
 
     function render_template(template, dictionary) {
         for (var name in dictionary) {
@@ -113,6 +135,16 @@ var Blah = function()
         }
         return template;
     }
+
+    // on-ready initialization
+
+    $(document).ready(function() {
+        $('#create-channel-name').keypress(function(e) {
+            if(e.which == 13) {
+                Blah.createChannel();
+            }
+        });
+    });
 
     // reveal module
 
@@ -127,22 +159,36 @@ var Blah = function()
         // functions
 
         selectChannel: function(channel_id) {
-            // select visually the channel
+            // Make sure messages from other channels get discarded
+            Blah.current_channel_id = channel_id;
+
+            // Cleanup currently seen messages
+            _seen_messages = new Set();
+
+            // GUI feedback
             $('div[data-channel-id]').removeClass('selected');
             $('div[data-channel-id=' + channel_id + ']').addClass('selected');
+
+            $('#messages').html('');
+
+            // request the channel switch
+            _socket.emit('select-channel', {
+                channel_id: channel_id
+            });
         },
 
         sendMessage: function() {
             $('#message')[0].readOnly = true;
             var message = $('#message')[0].value;
-            socket.emit('post-message', {
-                message: message
+            _socket.emit('post-message', {
+                message: message,
+                channel_id: Blah.current_channel_id
             });
         },
 
         createChannel: function() {
             var name = $('#create-channel-name')[0].value;
-            socket.emit('create-channel', {
+            _socket.emit('create-channel', {
                 name: name
             });
         },
