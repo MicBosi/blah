@@ -78,9 +78,9 @@ var Channel = mongoose.model('Channel', channelSchema);
 
 // DANGER ZONE
 // uncomment to disable persitency
-// User.remove({}, function(err) {});
-// Message.remove({}, function(err) {});
-// Channel.remove({}, function(err) {});
+User.remove({}, function(err) {});
+Message.remove({}, function(err) {});
+Channel.remove({}, function(err) {});
 
 function registerUser(username, password, callback) {
     // TODO: check permissions
