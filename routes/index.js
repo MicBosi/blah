@@ -49,10 +49,20 @@ module.exports = function(io, passport)
 
     var default_room = 'default-room';
 
+    var render_params = { 
+        title: config.app_name, 
+        version: config.app_version, 
+        port: config.port,
+        user: 'null', 
+        username: 'guest'
+    }
+
     /* home page */
     router.get('/', function(req, res, next) {
         if (req.user) {
-            res.render('index', { title: config.app_name, version: config.app_version, user: JSON.stringify({_id:req.user._id, username: req.user.username}), username: req.user.username });
+            render_params.user = JSON.stringify({_id:req.user._id, username: req.user.username});
+            render_params.username = req.user.username;
+            res.render('index', render_params);
         } else {
             res.redirect('/register');
             res.end();
@@ -62,18 +72,22 @@ module.exports = function(io, passport)
     /* login page */
     router.get('/login', function(req, res, next) {
         if (req.user) {
-            res.render('flash', { title: config.app_name, version: config.app_version, user: 'null', username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
+            render_params.err_title = 'Error';
+            render_params.message = 'Please <a href="/logout">log out</a> first.';
+            res.render('flash', render_params);
         } else {
-            res.render('login', { title: config.app_name, version: config.app_version, user: 'null', username: req.user ? req.user.username : 'guest' });
+            res.render('login', render_params);
         }
     });
 
     /* register page */
     router.get('/register', function(req, res, next) {
         if (req.user) {
-            res.render('flash', { title: config.app_name, version: config.app_version, user: 'null', username: req.user ? req.user.username : 'guest', err_title: 'Error', message: 'Please <a href="/logout">log out</a> first.'});
+            render_params.err_title = 'Error';
+            render_params.message = 'Please <a href="/logout">log out</a> first.';
+            res.render('flash', render_params);
         } else {
-            res.render('register', { title: config.app_name, version: config.app_version, user: 'null', username: req.user ? req.user.username : 'guest' });
+            res.render('register', render_params);
         }
     });
 

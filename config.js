@@ -6,5 +6,5 @@ module.exports = {
     session_cookie: 'blah.sid',
     app_name: 'Blah',
     app_version: '1.3.0',
-    app_port: '443'
+    port: '443'
 }
