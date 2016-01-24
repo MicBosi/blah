@@ -1,18 +1,19 @@
 extends plain_layout
 
 block plain_content
-    h2 Register
-    p 
-        p
-            span Username:<br>
-        input(type="text" id="username" style="width: 100%;")
-    p 
+    div(style="margin-left: 2em;")
+        h2 Register
         p 
-            span Password:<br>
-        input(type="text" id="password" style="width: 100%;")
-    p 
-        div(id="register-error" class="text-danger")
-        a(href="#" class="btn btn-success pull-right" onclick="Blah.register(); return false;") Register
-        div(style="clear:both;")
-    p
-        a(href="/login" title="Login") login
+            p
+                span Username:<br>
+            input(type="text" id="username" style="width: 100%;")
+        p 
+            p 
+                span Password:<br>
+            input(type="text" id="password" style="width: 100%;")
+        p 
+            div(id="register-error" class="text-danger")
+            a(href="#" class="btn btn-success pull-right" onclick="Blah.register(); return false;") Register
+            div(style="clear:both;")
+        p
+            a(href="/login" title="Login") login
