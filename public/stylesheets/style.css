@@ -49,7 +49,7 @@ input[type=text] {
 #content {
     /*display: inline-block;*/
     box-sizing: border-box;
-    /*width: 600px;*/
+    width: 600px;
     /*border-top: 1px solid lightgray;*/
     /*border-right: 1px solid lightgray;*/
     /*border-bottom: 1px solid lightgray;*/
@@ -99,6 +99,7 @@ input[type=text] {
     background-color: #F0F0F0;
     padding-left: 1em;
     cursor: pointer;
+    border-radius: 0px 5px 5px 0px;
 }
 
 #channel-list > div[data-channel-id] > .channel-name:hover {
