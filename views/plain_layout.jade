@@ -10,30 +10,11 @@ html
         link(rel='stylesheet', href='/stylesheets/style.css')
         link(rel='stylesheet', href='/font-awesome/css/font-awesome.min.css')
         script(src='/javascripts/harmony-collections.min.js')
+        script(src='/javascripts/markdown.min.js')
         script(src='/javascripts/blah.js')
         script.
             Blah.user = !{user};
     body
         div(id="wrapper")
-            div(id="menu")
-                div(id="user-info")
-                    span #{username}
-                    span &nbsp; &nbsp;
-                    a(href="/" title="Home")
-                        i(class="fa fa-home")
-                    span &nbsp; &nbsp;
-                    a(href="/register" title="Register")
-                        i(class="fa fa-user-plus")
-                    span &nbsp; &nbsp;
-                    a(href="/login" title="Log in")
-                        i(class="fa fa-sign-in")
-                    span &nbsp; &nbsp;
-                    a(href="/logout" title="Log out")
-                        i(class="fa fa-power-off")
-                    div(style="clear:both;")
-                h1
-                    span #{title}
-                    span &nbsp;
-                p(class="text-muted") The awesome communicator, #{version}            
             block plain_content
             div(style="clear:both;")

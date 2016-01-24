@@ -2,7 +2,19 @@ body {
     width: 100%;
     margin: 0;
     padding: 0;
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.css-table {
+    display: table;
+}
+
+.css-col {
+    display: table-cell;
+}
+
+blockquote {
+    font-size: 16px;
 }
 
 a {
@@ -17,27 +29,27 @@ input[type=text] {
     display: block;
     width: 900px;
     padding: 0;
-    margin: 1em auto;
+    /*margin: 0 auto;*/
 }
 
 #dashboard {
-    display: inline-block;
+    /*display: inline-block;*/
     box-sizing: border-box;
     width: 300px;
     /*border: 1px solid lightgray;*/
-    /*padding-top: 1em;*/
+    padding-top: 1em;
     padding-right: 1em;
-    /*padding-bottom: 1em;*/
-    /*padding-left: 1em;*/
+    padding-bottom: 1em;
+    padding-left: 1em;
     margin: 0;
-    float: left;
-    /*background-color: red;*/
+    /*float: left;*/
+    /*background-color: #280000;*/
 }
 
 #content {
-    display: inline-block;
+    /*display: inline-block;*/
     box-sizing: border-box;
-    width: 600px;
+    /*width: 600px;*/
     /*border-top: 1px solid lightgray;*/
     /*border-right: 1px solid lightgray;*/
     /*border-bottom: 1px solid lightgray;*/
@@ -47,13 +59,13 @@ input[type=text] {
     /*padding-bottom: 1em;*/
     padding-left: 1em;
     margin: 0;
-    float: left;
+    /*float: left;*/
     /*background-color: blue;*/
 }
 
 #menu {
-    /*padding-top: 1em;*/
-    padding-right: 1em;
+    padding-top: 1em;
+    /*padding-right: 1em;*/
     /*padding-bottom: 1em;*/
     /*padding-left: 1em;*/
     margin: 0;
@@ -73,6 +85,7 @@ input[type=text] {
 #create-channel-name {
     display: inline-block;
     width: 220px;
+    height: 34px;
 }
 
 #channel-list > div {
@@ -101,4 +114,8 @@ input[type=text] {
     box-sizing: border-box;
     width: 37px;
     height`: 34px;
+}
+
+.message-text {
+    white-space: pre-line;
 }

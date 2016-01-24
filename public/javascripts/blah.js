@@ -29,46 +29,51 @@ var Blah = function()
         var channel_list = $('#channel-list')[0];
         var delay = 100;
         var previous_div = null;
-        channels.forEach(function(channel) {
-            if (!_seen_channels.has(channel._id)) {
-                _seen_channels.add(channel._id)
-                var channel_btn_title = channel.owner == Blah.user._id ? 'Manage' : 'Leave';
-                var channel_btn_class = channel.owner == Blah.user._id ? 'fa-ellipsis-v' : 'fa-sign-out';
-                var template = render_template('<span class="channel-name" onclick="Blah.selectChannel({{channel_id}});">{{name}}</span><a title="{{channel_btn_title}}" class="btn btn-success channel-button pull-right"><i class="fa {{channel_btn_class}}"></i></a><div style="clear: both;"></div>', {
-                    channel_id: channel._id,
-                    name: channel.name,
-                    channel_btn_title: channel_btn_title,
-                    channel_btn_class: channel_btn_class
-                });
-                var div = document.createElement('div');
-                $(div).html(template);
-                $(div).attr('data-channel-id', channel._id);
-
-
-                setTimeout(
-                    (function(previous_div, div) { 
-                        return function() {
-                            $(div).fadeIn(400);
-                            
-                            if (previous_div == null) {
-                                channel_list.insertBefore(div, channel_list.firstChild);
-                            } else {
-                                // -> insertAfter(div, previous_div.nextSibling)
-                                previous_div.parentNode.insertBefore(div, previous_div.nextSibling);
-                            }
-
-                            // select top channel if _seen_channels is empty
-                            if(select_first_channel && channel._id == channels[0]._id) {
-                                Blah.selectChannel(channels[0]._id);
-                            }
-                        }
-                    })(previous_div, div),
-                    delay
-                );
-
-                delay += 100;
-                previous_div = div;
+        channels = channels.filter(function(channel) {
+            if (_seen_channels.has(channel._id)) {
+                return false;
+            } else {
+                _seen_channels.add(channel._id);
+                return true;
             }
+        });
+        channels.forEach(function(channel) {
+            var channel_btn_title = channel.owner == Blah.user._id ? 'Manage' : 'Leave';
+            var channel_btn_class = 'fa-ellipsis-v'; // channel.owner == Blah.user._id ? 'fa-ellipsis-v' : 'fa-sign-out';
+            var template = render_template('<span class="channel-name" onclick="Blah.selectChannel({{channel_id}});">{{name}}</span><a title="{{channel_btn_title}}" class="btn btn-success channel-button pull-right"><i class="fa {{channel_btn_class}}"></i></a><div style="clear: both;"></div>', {
+                channel_id: channel._id,
+                name: channel.name,
+                channel_btn_title: channel_btn_title,
+                channel_btn_class: channel_btn_class
+            });
+            var div = document.createElement('div');
+            $(div).html(template);
+            $(div).attr('data-channel-id', channel._id);
+
+
+            setTimeout(
+                (function(previous_div, div) { 
+                    return function() {
+                        $(div).fadeIn(400);
+                        
+                        if (previous_div == null) {
+                            channel_list.insertBefore(div, channel_list.firstChild);
+                        } else {
+                            // -> insertAfter(div, previous_div.nextSibling)
+                            previous_div.parentNode.insertBefore(div, previous_div.nextSibling);
+                        }
+
+                        // select top channel if _seen_channels is empty
+                        if(select_first_channel && channel._id == channels[0]._id) {
+                            Blah.selectChannel(channels[0]._id);
+                        }
+                    }
+                })(previous_div, div),
+                delay
+            );
+
+            delay += 100;
+            previous_div = div;
         });
     });
 
@@ -83,41 +88,46 @@ var Blah = function()
         var messages = $('#messages')[0];
         var delay = 50;
         var previous_p = null;
+        new_messages = new_messages.filter(function(msg_data) {
+            if (_seen_messages.has(msg_data._id)) {
+                return false;
+            } else {
+                _seen_messages.add(msg_data._id);
+                return true;
+            }
+        });
         new_messages.forEach(function(msg_data) {
-            if (!_seen_messages.has(msg_data._id)) {
-                _seen_messages.add(msg_data._id)
-                var p = document.createElement('p');
-                var date = new Date(msg_data.date);
-                var date_string = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-                var template = render_template("<blockquote><p>({{_id}}) <b>{{author}}</b>: {{message}}</p><footer>{{date_string}}</footer></blockquote>", {
-                    _id: msg_data._id,
-                    author: msg_data.author,
-                    message: msg_data.message,
-                    date_string: date_string
-                });
-                $(p).html(template);
+            var p = document.createElement('p');
+            var date = new Date(msg_data.date);
+            var date_string = date.toLocaleTimeString() + ' ' + date.toLocaleDateString();
+            var template = render_template('<blockquote><p><b>{{author}}</b> <span class="text-muted pull-right">{{date_string}}</span><br></p><p class="message-text">{{message}}</p></blockquote>', {
+                _id: msg_data._id,
+                author: msg_data.author,
+                message: markdown.toHTML(msg_data.message),
+                date_string: date_string
+            });
+            $(p).html(template);
 
-                setTimeout(
-                    (function(previous_p, p) { 
-                        return function() {
-                            $(p).fadeIn(400);
-                            
-                            if (previous_p == null) {
-                                messages.insertBefore(p, messages.firstChild);
-                            } else {
-                                // -> insertAfter(p, previous_p.nextSibling)
-                                if (previous_p.parentNode) {
-                                    previous_p.parentNode.insertBefore(p, previous_p.nextSibling);
-                                }
+            setTimeout(
+                (function(previous_p, p) { 
+                    return function() {
+                        $(p).fadeIn(400);
+                        
+                        if (previous_p == null) {
+                            messages.insertBefore(p, messages.firstChild);
+                        } else {
+                            // -> insertAfter(p, previous_p.nextSibling)
+                            if (previous_p.parentNode) {
+                                previous_p.parentNode.insertBefore(p, previous_p.nextSibling);
                             }
                         }
-                    })(previous_p, p),
-                    delay
-                );
+                    }
+                })(previous_p, p),
+                delay
+            );
 
-                delay += 50;
-                previous_p = p;
-            }
+            delay += 50;
+            previous_p = p;
         });
     });
 

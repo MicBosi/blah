@@ -25,6 +25,7 @@ var channelSchema = mongoose.Schema({
     name:    { type: String, required: true, unique: true }, // the name of the channel
     owner:   { type: Number, required: true},  // username of owner
     users:   [Number],                         // list of user ids participating to the channel, including owner
+    public:  { type: Boolean, required: true}, // whether the channel is deleted
     deleted: { type: Boolean, required: true}, // whether the channel is deleted
 });
 channelSchema.plugin(autoIncrement.plugin, {
@@ -112,6 +113,7 @@ function createChannel(user_id, channel_name, callback) {
         owner: user_id,
         users: [user_id],
         deleted: false,
+        public: true,
     });
     channel.save(callback);
 }
@@ -121,7 +123,7 @@ function getChannels(user_id, callback) {
     // TODO: check permissions
     // - user is logged in
     Channel.find(
-        {users: user_id}, // find "user_id" in "users" array
+        { $or: [ { public: true }, { users: user_id } ] }, // find "user_id" in "users" array
         null, // columns
         {     // options
             sort: {'_id': -1}

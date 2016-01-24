@@ -1,28 +1,62 @@
 extends plain_layout
 
 block plain_content
-    div(id="dashboard")
-        div(id="channel-add")
-            div
-                input(id="create-channel-name" type="text" placeholder="Create new channel")
-                a(href="#" class="btn btn-success channel-button pull-right" title="New Channel" onclick="Blah.createChannel(); return false;")
-                    i(class="fa fa-plus")
-                div(style="clear: both;")
-        div(id="channel-list")
-            // div
-            //     span(class="channel-name") Secret Stories
-            //     a(class="btn btn-success channel-button pull-right" title="Leave Channel")
-            //         i(class="fa fa-sign-out")
-            //     div(style="clear: both;")
-            // div
-            //     span(class="channel-name") Secret Appointments
-            //     a(class="btn btn-success channel-button pull-right" title="Manage Channel")
-            //         i(class="fa fa-ellipsis-v")
-            //     div(style="clear: both;")
-            // div
-            //     span(class="channel-name") Awesome Results
-            //     a(class="btn btn-success channel-button pull-right" title="New Chat")
-            //         i(class="fa fa-ellipsis-v")
-            //     div(style="clear: both;")
-    div(id="content")
-        block content
+    div(class="css-table")
+            div(id="dashboard" class="css-col")
+                div(id="channel-add")
+                    div
+                        input(id="create-channel-name" type="text" placeholder="Create new channel")
+                        a(href="#" class="btn btn-success channel-button pull-right" title="New Channel" onclick="Blah.createChannel(); return false;")
+                            i(class="fa fa-plus")
+                        // div(style="clear: both;")
+                hr
+                div(id="channel-list")
+                    // div
+                    //     span(class="channel-name") Secret Stories
+                    //     a(class="btn btn-success channel-button pull-right" title="Leave Channel")
+                    //         i(class="fa fa-sign-out")
+                    //     div(style="clear: both;")
+                    // div
+                    //     span(class="channel-name") Secret Appointments
+                    //     a(class="btn btn-success channel-button pull-right" title="Manage Channel")
+                    //         i(class="fa fa-ellipsis-v")
+                    //     div(style="clear: both;")
+                    // div
+                    //     span(class="channel-name") Awesome Results
+                    //     a(class="btn btn-success channel-button pull-right" title="New Chat")
+                    //         i(class="fa fa-ellipsis-v")
+                    //     div(style="clear: both;")
+            div(id="content" class="css-col")
+                div(id="menu")
+                    div(id="user-info")
+                        div(style="display: inline-block; width: 200px; margin: 0 10px 0 0; padding: 0;")
+                            div(class="input-group")
+                                span(class="input-group-addon")
+                                    i(class="fa fa-search")
+                                input(type="text" class="form-control" placeholder="Search...")
+                        // style="display: inline-block; vertical-align: top;" 
+                        div(class="dropdown pull-right")
+                            span(class="btn btn-default channel-button dropdown-toggle" data-toggle="dropdown" title="Menu") 
+                                i(class="fa fa-bars")
+                            ul(class="dropdown-menu")
+                                li
+                                    a(href="/" title="Home")
+                                        i(class="fa fa-home")
+                                        span &nbsp; Home
+                                li
+                                    a(href="/register" title="Register")
+                                        i(class="fa fa-user-plus")
+                                        span &nbsp; Register
+                                li
+                                    a(href="/login" title="Log in")
+                                        i(class="fa fa-sign-in")
+                                        span &nbsp; Log in
+                                li
+                                    a(href="/logout" title="Log out")
+                                        i(class="fa fa-power-off")
+                                        span &nbsp; Log out
+                    // h1
+                    //     span #{title}
+                    //     span &nbsp;
+                    // p(class="text-muted") The awesome communicator, #{version}            
+                block content
