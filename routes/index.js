@@ -1,15 +1,7 @@
 module.exports = function(io, passport) 
 {
     var config = require('../config');
-    var api = require('../api');
     var model = require('../model');
-
-    // grab Message model
-    var Message = model.Message;
-    
-    // DANGER ZONE
-    // uncomment to disable persitency
-    // Message.remove({}, function(err) {});
 
     // setup Express routing
     var express = require('express');
@@ -132,13 +124,6 @@ module.exports = function(io, passport)
             failureFlash: false
         })
     );
-    // router.post('/api/login', function(req, res, next) {
-    //     var ok = api.loginUser(req.body.username, req.body.password);
-    //     res.type('application/json');
-    //     res.end(JSON.stringify({
-    //         ok: ok
-    //     }));
-    // });
 
     /* socket.io */
     io.on('connection', function (socket) {

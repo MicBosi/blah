@@ -196,14 +196,8 @@ function subscribeUser(user_id, channel_id, callback) {
             strict: false,
             overwrite: false
         },
-        // errors callback
+        // function(err, raw): errors callback 
         callback
-        // function(err, raw) {
-        //     if (err) {
-        //         return handleError(err);
-        //     }
-        //     console.log('subscribeUser(): The raw response from Mongo was:\n', raw);        
-        // }
     );
 }
 
@@ -224,14 +218,8 @@ function unsubscribeUser(user_id, channel_id, callback) {
             strict: false,
             overwrite: false
         },
-        // errors callback
+        // function(err, raw): errors callback 
         callback
-        // function(err, raw) {
-        //     if (err) {
-        //         return handleError(err);
-        //     }
-        //     console.log('unsubscribeUser(): The raw response from Mongo was:\n', raw);        
-        // }
     );
 }
 
